@@ -1,0 +1,55 @@
+﻿@{
+    var err = ViewData["err"] as string[];
+    var saveData = ViewData["SaveData"] as string[];
+}
+
+<h1>
+    Регистрация нового пользователя
+</h1>
+
+<form action = "/Auth/RegUser" method = "post" enctype = "multipart/form-data">
+
+    Имя: <input type = "text" name = "RealName" value = "@saveData?[0]"/> 
+    @if(!string.IsNullOrEmpty(err?[1]))
+    {
+        @err[1]
+    }
+    <br />
+    Логин: <input type = "text" name = "Login" value = "@saveData?[1]" />
+    @if(!string.IsNullOrEmpty(err?[2]))
+    {
+        @err[2]
+    }
+    <br />
+    Пароль: <input type = "password" name = "Password1" />
+    @if(!string.IsNullOrEmpty(err?[3]))
+    {
+        @err[3]
+    }
+    <br />
+    Повтор: <input type = "password" name = "Password2" /> 
+    @if(!string.IsNullOrEmpty(err?[4]))
+    {
+        @err[4]
+    }
+    <br />
+    E-mail: <input type = "email" name = "Email" value = "@saveData?[2]" />
+    @if(!string.IsNullOrEmpty(err?[5]))
+    {
+        @err[5]
+    }
+    <br />
+    Аватарка: <input type = "file" name = "Avatar" /> <br />
+    <button type = "submit">Зарегистрироваться</button>
+
+</form>
+
+@{
+    var UserData = ViewData["UserData"] as RegUserModel;
+    var image = ViewData["image"] as string;
+}
+
+@if(image != null)
+{
+    <img src = "/img/@image"/>
+}

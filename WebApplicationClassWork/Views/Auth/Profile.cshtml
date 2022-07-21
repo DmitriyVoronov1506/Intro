@@ -1,0 +1,34 @@
+﻿@{
+    var user = ViewData["AuthUser"] as WebApplicationClassWork.DAL.Entities.User; 
+}
+
+<h1>Кабинет пользователя</h1>
+
+@if(user == null)
+{
+    <a href="/Auth">Необходимо авторизироваться</a>
+}
+
+@if(@user.LogMoment != null)
+{
+    <br />
+    <span>Последний раз вы были в сети @user.LogMoment.ToString()</span>
+    <br />    
+}
+
+    <label for="avatar">
+        <img id = "userLogo" src = "/img/@user.Avatar" style = "max-height: 15em; border-radius:50%"/>
+    </label>
+    <br />
+    <i>Real Name:</i> <span id="userRealName">@user.RealName</span>
+    <br />
+    <i>Login:</i> <span id="userLogin">@user.Login</span>
+    <br />
+    <i>Email:</i> <span id="userEmail">@user.Email</span>
+    <br />
+    <i>New Password:</i> <span id="userPassword" style="width:170px; display:inline-block; border: 4px groove;">New password</span>
+    
+    <input type="file" id="avatar" style="visibility:hidden" accept="image/*"/>
+
+
+<script src="/js/profile.js"></script>

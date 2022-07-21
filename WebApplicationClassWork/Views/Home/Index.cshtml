@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<p id="rndNumber">
+    @ViewData["rnd"]
+</p>
+
+<i>
+    @ViewBag.hash
+</i>
+
+<p>
+    <br />  
+    <b>Current Date:</b> @ViewData["DateCurrent"]
+    <br />
+    <b>Current Time:</b> @ViewData["DateTime"]
+</p>
+
+<p>
+    <br />
+    Users Count: @ViewData["UsersCount"]
+</p>
+
+<p>
+    fromAuthMiddleware: @ViewData["fromAuthMiddleware"]
+</p>
+
+<p>
+    authUserName: @ViewData["authUserName"]
+</p>
+
+<p>
+    Список пользователей:
+    <br />
+
+    @foreach(var user in (List<string>)ViewData["UserNames"])
+    {
+        <b>@user</b>
+        <br />
+    }
+
+</p>
+
+<script>
+
+    setInterval(
+        () => { 
+            fetch("/Home/Random")
+            .then(r => r.text())
+            .then(t => rndNumber.innerText = t)
+        },
+        1000
+    )
+
+</script>
