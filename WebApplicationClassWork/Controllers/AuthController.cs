@@ -357,9 +357,9 @@ namespace WebApplicationClassWork.Controllers
             {
                 message = "Email could not be empty";
             }
-            else if (Regex.IsMatch(NewEmail, @"\s"))
+            else if (!Regex.IsMatch(NewEmail, @"^[A-z][A-z\d_]{3,16}@([a-z]{1,10}\.){1,5}[a-z]{2,3}$"))
             {
-                message = "Email could not contain spaces";
+                message = "Email has wrong format";
             }
             else if (_introContext.Users.Where(u => u.Email == NewEmail).Count() > 0)
             {
