@@ -161,6 +161,15 @@ namespace WebApplicationClassWork.API
                 }
             }
 
+            if(userData.Email != null)
+            {
+                if(!Regex.IsMatch(userData.Email, @"^[A-z][A-z\d_]{3,16}@([a-z]{1,10}\.){1,5}[a-z]{2,3}$"))
+                {
+                    HttpContext.Response.StatusCode = 409;
+                    return "Conflict: Wrong Email format";
+                }
+            }
+
             if (userData.RealName != null)
             {
                 user.RealName = userData.RealName;
