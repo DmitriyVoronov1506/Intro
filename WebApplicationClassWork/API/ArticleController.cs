@@ -108,9 +108,20 @@ namespace WebApplicationClassWork.API
         }
 
         [HttpGet]
-        public IEnumerable<Article> Get()
+        public IEnumerable<Article> Get(string topicId)
         {
-            return _context.Articles;
+            Guid TopicId;
+
+            try
+            {
+                TopicId = Guid.Parse(topicId);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return _context.Articles.Where(a => a.TopicId == TopicId);
         }
     }
 }
