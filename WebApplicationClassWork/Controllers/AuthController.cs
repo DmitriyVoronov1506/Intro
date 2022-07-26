@@ -201,7 +201,7 @@ namespace WebApplicationClassWork.Controllers
 
                     string extension = Path.GetExtension(UserData.Avatar.FileName);  // Получаем только тип файла (.png, .jpg, ...)
 
-                    var pictures = new DirectoryInfo("./wwwroot/img/").GetFiles();  // Получаем все картинки которые есть в папке img
+                    var pictures = new DirectoryInfo("./wwwroot/img/UserImg/").GetFiles();  // Получаем все картинки которые есть в папке img
 
                     while (ifExists)
                     {
@@ -211,7 +211,7 @@ namespace WebApplicationClassWork.Controllers
 
                         if (finedName == null) // Если нашли с таким именем, возвращаемся в цикл и генерируем опять имя
                         {
-                            UserData.Avatar.CopyToAsync(new FileStream("./wwwroot/img/" + fileName, FileMode.Create));  // Если такого имени нет, создаём картинку
+                            UserData.Avatar.CopyToAsync(new FileStream("./wwwroot/img/UserImg/" + fileName, FileMode.Create));  // Если такого имени нет, создаём картинку
 
                             ifExists = false;
                         }
@@ -419,12 +419,12 @@ namespace WebApplicationClassWork.Controllers
             string extension = Path.GetExtension(userAvatar.FileName);
             string fileName = userAvatar.FileName.Replace(extension, "-") + Guid.NewGuid() + extension;
 
-            var file = new FileStream("./wwwroot/img/" + fileName, FileMode.Create);
+            var file = new FileStream("./wwwroot/img/UserImg/" + fileName, FileMode.Create);
             userAvatar.CopyToAsync(file).ContinueWith(t => file.Dispose());
                
             if(_authService.User.Avatar != null)
             {
-                System.IO.File.Delete("./wwwroot/img/" + _authService.User.Avatar);
+                System.IO.File.Delete("./wwwroot/img/UserImg/" + _authService.User.Avatar);
             }
             
             _authService.User.Avatar = fileName;

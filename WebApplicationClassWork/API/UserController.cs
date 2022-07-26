@@ -152,12 +152,12 @@ namespace WebApplicationClassWork.API
                 string extension = Path.GetExtension(userData.Avatar.FileName);
                 fileName = userData.Avatar.FileName.Replace(extension, "-") + Guid.NewGuid() + extension;
 
-                var file = new FileStream("./wwwroot/img/" + fileName, FileMode.Create);
+                var file = new FileStream("./wwwroot/img/UserImg/" + fileName, FileMode.Create);
                 userData.Avatar.CopyToAsync(file).ContinueWith(t => file.Dispose());
 
                 if (user.Avatar != null)
                 {
-                    System.IO.File.Delete("./wwwroot/img/" + user.Avatar);
+                    System.IO.File.Delete("./wwwroot/img/UserImg/" + user.Avatar);
                 }
             }
 
