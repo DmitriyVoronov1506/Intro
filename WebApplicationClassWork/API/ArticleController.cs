@@ -22,7 +22,7 @@ namespace WebApplicationClassWork.API
         }
 
         [HttpPost]
-        public object Post(ArticleModel article)
+        public object Post([FromForm] ArticleModel article)
         {
             string AuthorIdHeader = HttpContext.Request.Headers["Author-Id"].ToString();
 
