@@ -22,11 +22,11 @@ namespace WebApplicationClassWork.API
         }
 
         [HttpPost]
-        public object Post([FromForm] ArticleModel article)
+        public object Post([FromForm] ArticleModel article) // fromform что ы удобнее через постман посылать картинку
         {
-            string AuthorIdHeader = HttpContext.Request.Headers["Author-Id"].ToString();
+            string AuthorIdHeader = HttpContext.Request.Headers["Authors-Id"].ToString(); // Получаем ид автора статьи из хедера
 
-            Guid AuthorId;
+            Guid AuthorId;   // проверяем гуиды на валидность
             Guid TopicId;
             string fileName = string.Empty;
 
@@ -53,7 +53,7 @@ namespace WebApplicationClassWork.API
                 return new { status = "Error", message = "Article text is empty" };
             }
 
-            var articleToAdd = new Article();
+            var articleToAdd = new Article();  // Валидация пройдена, начинаем собирать статью
 
             if (article.ReplyId == null)
             {
@@ -76,7 +76,7 @@ namespace WebApplicationClassWork.API
             articleToAdd.CreatedDate = DateTime.Now;
             articleToAdd.AuthorId = AuthorId;
             
-            if(article.PictureFile != null)
+            if(article.PictureFile != null) // Для картинок создал отдельные папки для Юзера и для Статей что бы не смешивать 
             {
                 bool ifExists = true;
 
@@ -104,13 +104,13 @@ namespace WebApplicationClassWork.API
             _context.Articles.Add(articleToAdd);
             _context.SaveChanges();
 
-            return new { status = "Ok", message = $"Article for topic '{article.TopicId}' was created" };
+            return new { status = "Ok", message = $"Article for topic '{article.TopicId}' was created" };  // Статья создана успешно
         }
 
         [HttpGet]
         public IEnumerable<Article> Get(string topicId)
         {
-            Guid TopicId;
+            Guid TopicId;  // Если гуид 
 
             try
             {
@@ -121,7 +121,7 @@ namespace WebApplicationClassWork.API
                 return null;
             }
 
-            return _context.Articles.Where(a => a.TopicId == TopicId);
+            return _context.Articles.Where(a => a.TopicId == TopicId); // возвращаем все статьи топика
         }
     }
 }

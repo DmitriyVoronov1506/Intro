@@ -66,8 +66,8 @@ function avatarChange(e) {
         }).then(r => r.json())
             .then(j => {
                 if (j.status == "Ok") {
-                    userLogo.src = "/img/" + j.message;
-                    imageBar.src = "/img/" + j.message;
+                    userLogo.src = "/img/UserImg/" + j.message;
+                    imageBar.src = "/img/UserImg/" + j.message;
                 }
                 else {
                     alert(j.message);
