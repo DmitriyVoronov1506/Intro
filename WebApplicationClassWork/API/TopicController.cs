@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace WebApplicationClassWork.API
 {
-    [Route("api/[controller]")]
+    [Route("api/topic")]
     [ApiController]
     public class TopicController : ControllerBase
     {
