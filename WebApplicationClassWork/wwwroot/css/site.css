@@ -70,9 +70,26 @@ body {
   line-height: 60px; /* Vertically center the text there */
 }
 
-.topic {
-    border: 2px solid lightgray;
-    box-shadow: 0 0 4px 5px lightgray;
-    margin: 5vh 5vh;
-    padding: 4vh 4vh;
+
+#topics {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#topics td, #topics th {
+    border: 1px solid #d0d8db;
+    padding: 8px;
+}
+
+
+#topics tr:hover {
+    background-color: #d0d8db;
+}
+
+#topics th {
+    background-color: #9a3737;
+    color: white;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
 }

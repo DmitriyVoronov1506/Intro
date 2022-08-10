@@ -35,10 +35,21 @@ function loadTopics(elem) {
 
 function showTopics(elem, j) {
 
-    for (let topic of j) {
+    // шапка таблицы
+    let tableheader = "<tr><th>Number</th><th>Title</th><th>Description</th></tr>";
 
-        elem.innerHTML += `<div class = 'topic' data-id='${topic.id}'>
-        <b>${topic.title}</b><i>${topic.description}</i></div>`;
+    let table = "";
+
+    // счётчик 
+    let i = 0;
+
+    for (let topic of j) { // бежим по топикам
+        
+        ++i; // увеличиваем счётчик
+        table += `<tr data-id='${topic.id}'><td>${i}</td><td>${topic.title}</td><td>${topic.description}</td></tr>`;
     }
+
+    // записываем в elem
+    elem.innerHTML = `<table id='topics'>${tableheader}${table}</table>`;
 
 }
