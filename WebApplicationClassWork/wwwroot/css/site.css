@@ -70,8 +70,14 @@ body {
   line-height: 60px; /* Vertically center the text there */
 }
 
+.topic {
+    border: 2px solid lightgray;
+    box-shadow: 0 0 4px 5px lightgray;
+    margin: 5vh 5vh;
+    padding: 4vh 4vh;
+}
 
-#topics {
+/*#topics {
     border-collapse: collapse;
     width: 100%;
 }
@@ -92,4 +98,4 @@ body {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: center;
-}
+}*/
