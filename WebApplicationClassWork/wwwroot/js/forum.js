@@ -35,37 +35,6 @@ function loadTopics(elem) {
 
 function showTopics(elem, j) {
 
-    //// шапка таблицы
-    //let tableheader = "<tr><th>Number</th><th>Title</th><th>Description</th></tr>";
-
-    //let table = "";
-
-    //// счётчик 
-    //let i = 0;
-
-    //for (let topic of j) { // бежим по топикам
-        
-    //    ++i; // увеличиваем счётчик
-    //    table += `<tr data-id='${topic.id}'><td>${i}</td><td>${topic.title}</td><td>${topic.description}</td></tr>`;
-    //}
-
-    //// записываем в elem
-    //elem.innerHTML = `<table id='topics'><col style=\"width: 10px\">${tableheader}${table}</table>`;
-
-
-
-    //var trTemplate = "<tr><td>*title</td><td>*descr</td></tr>";
-    //var appHtml = "<table border=1>";
-    //for (let topic of j) {
-    //    appHtml +=
-    //        trTemplate
-    //            .replace("*title", topic.title)
-    //            .replace("*descr", topic.description);
-    //}
-    //appHtml += "</table>";
-    //elem.innerHTML = appHtml;
-
-
     fetch("/templates/topic.html")
         .then(r => r.text())
         .then(trTemplate => {
@@ -82,6 +51,15 @@ function showTopics(elem, j) {
 
             elem.innerHTML = appHtml;
 
+            let collection = document.getElementsByClassName("topic");  // получаем по классу коллекцию дивов
+
+            for (let i = 0; i < collection.length; i++) {  // вешаем на все обработчики
+                collection[i].addEventListener('click', () => showId(j[i].id));
+            }
+
         });
- 
+}
+
+function showId(id) {  // вывод на экран  ид
+    alert(id);
 }
