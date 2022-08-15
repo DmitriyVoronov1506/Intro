@@ -42,24 +42,46 @@ function showTopics(elem, j) {
             var appHtml = "";
 
             for (let topic of j) {
-                appHtml +=
-                    trTemplate
-                        .replace("{{title}}", topic.title)
-                        .replace("{{description}}", topic.description)
-                        .replace("{{id}}", topic.id);
+
+                let tpl = trTemplate;
+
+                for (let prop in topic) {
+                    tpl = tpl.replaceAll(`{{${prop}}}`, topic[prop]);
+                }
+                appHtml += tpl;
+
+                //appHtml +=
+                //    trTemplate
+                //        .replaceAll("{{title}}", topic.title)
+                //        .replaceAll("{{description}}", topic.description)
+                //        .replaceAll("{{id}}", topic.id);
             }
 
             elem.innerHTML = appHtml;
 
-            let collection = document.getElementsByClassName("topic");  // получаем по классу коллекцию дивов
+            //let collection = document.getElementsByClassName("topic");  // получаем по классу коллекцию дивов
 
-            for (let i = 0; i < collection.length; i++) {  // вешаем на все обработчики
-                collection[i].addEventListener('click', () => showId(j[i].id));
-            }
+            //for (let i = 0; i < collection.length; i++) {  // вешаем на все обработчики
+            //    collection[i].addEventListener('click', () => showId(j[i].id));
+            //}
+
+            topicLoaded();
 
         });
 }
 
-function showId(id) {  // вывод на экран  ид
-    alert(id);
+async function topicLoaded() {
+
+    for (let topic of document.querySelectorAll(".topic")) {
+        topic.onclick = topicClick;
+    }
 }
+
+function topicClick(e) {
+
+    window.location = "/Forum/Topic/" + e.target.closest(".topic").getAttribute("data-id");
+}
+
+//function showId(id) {  // вывод на экран  ид
+//    alert(id);
+//}
