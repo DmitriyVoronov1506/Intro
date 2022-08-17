@@ -6,6 +6,8 @@
     @ViewData["id"]
 </p>
 
+<articles topic-id='@ViewData["id"]'></articles>
+
 @if(ViewData["AuthUser"] == null)
 {
     <i>Необходимо войти в систему</i>
@@ -16,7 +18,10 @@ else
 
     <b>Добавить комментарий</b>
     <br />
-    <textarea id="article-text" data-author="@user.Id" data-topic="@ViewData["id"]" data-datetime="@DateTime.Now"></textarea>
+    <textarea id="article-text" data-author-id="@user.Id" data-topic-id="@ViewData["id"]" data-datetime="@DateTime.Now"></textarea>
+    <br />
+    <span>Добавить картинку:</span>
+    <input type="file" name="picture">
     <br />
     <button id="button-publish">Опубликовать</button>
     <script src="~/js/topic.js"></script>

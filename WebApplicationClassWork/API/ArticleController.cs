@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +11,7 @@ using WebApplicationClassWork.Models;
 
 namespace WebApplicationClassWork.API
 {
-    [Route("api/[controller]")]
+    [Route("api/article")]
     [ApiController]
     public class ArticleController : ControllerBase
     {
@@ -24,15 +25,13 @@ namespace WebApplicationClassWork.API
         [HttpPost]
         public object Post([FromForm] ArticleModel article) // fromform что ы удобнее через постман посылать картинку
         {
-            string AuthorIdHeader = HttpContext.Request.Headers["Authors-Id"].ToString(); // Получаем ид автора статьи из хедера
-
             Guid AuthorId;   // проверяем гуиды на валидность
             Guid TopicId;
             string fileName = string.Empty;
 
             try
             {
-                AuthorId = Guid.Parse(AuthorIdHeader);
+                AuthorId = Guid.Parse(article.AuthorId);
             }
             catch (Exception ex)
             {
@@ -51,6 +50,11 @@ namespace WebApplicationClassWork.API
             if(string.IsNullOrEmpty(article.Text))
             {
                 return new { status = "Error", message = "Article text is empty" };
+            }
+
+            if(_context.Users.Find(article.AuthorId) == null)
+            {
+                return new { status = "Error", message = "Invalid Author" };
             }
 
             var articleToAdd = new Article();  // Валидация пройдена, начинаем собирать статью
@@ -107,21 +111,21 @@ namespace WebApplicationClassWork.API
             return new { status = "Ok", message = $"Article for topic '{article.TopicId}' was created" };  // Статья создана успешно
         }
 
-        [HttpGet]
-        public IEnumerable<Article> Get(string topicId)
+        [HttpGet("{id}")]
+        public IEnumerable Get(string id)
         {
             Guid TopicId;  // Если гуид 
 
             try
             {
-                TopicId = Guid.Parse(topicId);
+                TopicId = Guid.Parse(id);
             }
             catch (Exception ex)
             {
                 return null;
             }
 
-            return _context.Articles.Where(a => a.TopicId == TopicId); // возвращаем все статьи топика
+            return _context.Articles.Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate); // возвращаем все статьи топика
         }
     }
 }
