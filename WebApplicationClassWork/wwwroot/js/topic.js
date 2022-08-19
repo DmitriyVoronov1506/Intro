@@ -2,9 +2,7 @@
 
     const buttonPublish = document.getElementById("button-publish");
 
-    if (!buttonPublish) throw "button-publish element not found";
-
-    buttonPublish.onclick = buttonPublishClick;
+    if (buttonPublish) buttonPublish.onclick = buttonPublishClick;
 
     loadArticles();
 
@@ -42,7 +40,11 @@ function buttonPublishClick(e) {
     })
       .then(r => r.json())
       .then(j => {
-          if (j.status == "Ok") loadArticles()
+          if (j.status == "Ok") {
+
+              articleText.value = "";
+              loadArticles();
+          }        
           else alert(j.message);
       });
        
@@ -58,12 +60,21 @@ function loadArticles() {
     fetch(`/api/article/${id}`)
         .then(r => r.json())
         .then(j => {
-
+            console.log(j);
             var html = "";
+            const tpl = `<div style='border:1px solid salmon'>
+                              <img src='/img/UserImg/{{avatar}}' style='max-height:7ch' />                   
+                              <b>{{author}} @{{moment}}</b>:
+                              <p>{{text}}</p>                       
+                         </div>`;
 
             for (let article of j) {
-                html += article.text + "<hr/>";
-            }
+                const moment = new Date(article.createdDate);
+                html += tpl.replaceAll("{{author}}", article.author.realName)
+                    .replaceAll("{{text}}", article.text)
+                    .replaceAll("{{avatar}}", (article.author.avatar == "" || article.author.avatar == null ? "no-avatar.png" : article.author.avatar))
+                    .replaceAll("{{moment}}", new Date(article.createdDate).toLocaleString("ru-RU"));
+            } 
 
             articles.innerHTML = html;
         });

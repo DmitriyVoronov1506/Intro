@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplicationClassWork.DAL.Context;
 
 namespace WebApplicationClassWork.Migrations
 {
     [DbContext(typeof(IntroContext))]
-    partial class IntroContextModelSnapshot : ModelSnapshot
+    [Migration("20220817174317_Relations1")]
+    partial class Relations1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

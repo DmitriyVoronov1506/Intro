@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace WebApplicationClassWork.API
                 return new { status = "Error", message = "Article text is empty" };
             }
 
-            if(_context.Users.Find(article.AuthorId) == null)
+            if(_context.Users.Find(AuthorId) == null)
             {
                 return new { status = "Error", message = "Invalid Author" };
             }
@@ -124,8 +125,7 @@ namespace WebApplicationClassWork.API
             {
                 return null;
             }
-
-            return _context.Articles.Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate); // возвращаем все статьи топика
+            return _context.Articles.Include(a => a.Author).Include(a => a.Topic).Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate); // возвращаем все статьи топика
         }
     }
 }
