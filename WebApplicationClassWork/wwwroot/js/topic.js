@@ -92,4 +92,8 @@ function onArticlesLoad() {
 function replyClick(e) {
 
     console.log(e.target.closest(".article").getAttribute("data-id"));
+
+    const arttext = document.getElementById("article-text");
+    arttext.focus();
+    arttext.value = "Reply to " + e.target.closest(".article").getAttribute("data-id");
 }
