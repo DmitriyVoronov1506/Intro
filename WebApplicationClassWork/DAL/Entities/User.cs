@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -22,5 +24,8 @@ namespace WebApplicationClassWork.DAL.Entities
         public String Avatar { get; set; }
         public DateTime RegMoment { get; set; }
         public DateTime? LogMoment { get; set; }
+
+        [JsonIgnore]
+        public IEnumerable<Article> Articles { get; set; }
     }
 }

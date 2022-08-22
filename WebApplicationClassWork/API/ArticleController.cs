@@ -125,6 +125,9 @@ namespace WebApplicationClassWork.API
             {
                 return null;
             }
+
+            var list = _context.Articles.Include(a => a.Author).Include(a => a.Topic).Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate).ToList();
+
             return _context.Articles.Include(a => a.Author).Include(a => a.Topic).Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate); // возвращаем все статьи топика
         }
     }

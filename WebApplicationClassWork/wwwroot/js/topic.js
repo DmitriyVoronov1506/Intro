@@ -55,28 +55,16 @@ function loadArticles() {
     const articles = document.querySelector("articles");
     if (!articles) throw "articles element not found";
 
+    let tplPromis = fetch("/templates/article.html")
+
     const id = articles.getAttribute("topic-id");
 
     fetch(`/api/article/${id}`)
         .then(r => r.json())
-        .then(j => {
+        .then(async j => {
             console.log(j);
             var html = "";
-            const tpl = `<div style='border: 3px solid lightgray; box-shadow: 0 0 4px 5px lightblue; margin-bottom: 1em;
-                         padding: 10px; border-radius: 5% 40% 5% 5%;; overflow: auto; background-color:lightgreen'>
-                             <div style='display: block; float: left'>
-                                 <img src='/img/UserImg/{{avatar}}' style='height:8ch; width:8ch; 
-                                 border:1px solid grey; border-radius: 30%; background: white' />
-                             </div>
-                             <div style='float: none; overflow: auto; padding-left: 10px'>
-                                 <b>{{author}}</b><br/> {{moment}}
-                                 <hr style='border: 1px solid blue; border-radius: 2px;'>
-                             </div>
-                             {{PictureFileForArticle}}
-                             <div style='float: none; overflow: auto; padding-left: 15px;'>
-                                 <p>{{text}}</p>
-                             </div>
-                         </div>`;
+            const tpl = await tplPromis.then(r => r.text());
 
             for (let article of j) {
                 const moment = new Date(article.createdDate);
@@ -84,10 +72,24 @@ function loadArticles() {
                     .replaceAll("{{text}}", article.text)
                     .replaceAll("{{avatar}}", (article.author.avatar == "" || article.author.avatar == null ? "no-avatar.png" : article.author.avatar))
                     .replaceAll("{{moment}}", new Date(article.createdDate).toLocaleString("ru-RU"))
-                    .replaceAll("{{PictureFileForArticle}}", (article.pictureFile != null && article.pictureFile != "" ? `<img src='/img/ArticleImg/${article.pictureFile}' style='height:10ch; width:10ch; display: block; float: left'>` : ""));
+                    .replaceAll("{{PictureFileForArticle}}", (article.pictureFile != null && article.pictureFile != "" ? `<img src='/img/ArticleImg/${article.pictureFile}' style='height:10ch; width:10ch; display: block; float: left'>` : ""))
+                    .replaceAll("{{id}}", article.id);
             } 
 
             articles.innerHTML = html;
+
+            onArticlesLoad();
         });
 }
 
+function onArticlesLoad() {
+
+    for (let span of document.querySelectorAll(".article span")) {
+        span.onclick = replyClick;
+    }
+}
+
+function replyClick(e) {
+
+    console.log(e.target.closest(".article").getAttribute("data-id"));
+}
