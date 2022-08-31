@@ -15,22 +15,46 @@
 
             for (let article of j) {
                 
-                table += `<tr><td>${formatDateIfDateToday(new Date(article.deleteMoment))}</td><td>${article.topic.title}</td><td>${article.text}</td><td>&#128472; <ins>&#x21ED;</ins></td></tr>`;
+                table += `<tr data-id=${article.id}><td>${formatDateIfDateToday(new Date(article.deleteMoment))}</td><td>${article.topic.title}</td><td>${article.text}</td><td>&#128472; <ins>&#x21ED;</ins></td></tr>`;
             }
 
             junk.innerHTML = `<table id='topics'><col style="width:20px"><col><col><col style="width:10px">${headerTable}${table}</table>`;
+
+            if (typeof j[0] !== 'undefined') {
+                junk.setAttribute("data-user-id", j[0].authorId);
+            }
+
             onArticleLoaded();
         })
 });
 
 function onArticleLoaded() {
-    for (let ins of document.querySelectorAll("p ins")) {
+    for (let ins of document.querySelectorAll("td ins")) {
         ins.onclick = insClick;
     }
 }
 
 function insClick(e) {
-    console.log(e.target);
+    const uid = e.target.closest('tr').getAttribute('data-id');
+    const thisTr = e.target.closest('tr');
+    const junk = document.querySelector("junk");
+    console.log(uid);
+    fetch("/api/article?uid=" + uid, {
+        method: "PURGE",
+        headers: {
+            "User-Id": junk.getAttribute('data-user-id')
+        }
+    }).then(r => r.json())
+        .then(j => {
+            console.log(j);
+            if (j.message == "Ok") {  // успешно восстановлена
+
+                thisTr.parentNode.removeChild(thisTr);  // удаляем из таблицы 
+            }
+            else {  // ошибка восстановления (на бэке)
+                alert(j.message);
+            }
+        });
 }
 
 function formatDateIfDateToday(deleteDate) {
