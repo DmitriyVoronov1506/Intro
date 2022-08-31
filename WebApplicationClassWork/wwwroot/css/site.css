@@ -139,4 +139,33 @@ body {
         margin-right: 2em;
         margin-top: 3px;
         text-decoration: none;
+    }
+
+/*========================== Delete topics ==========================*/
+#topics {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    #topics td, #topics th {
+        border: 1px solid #d0d8db;
+        padding: 8px;
+    }
+
+    #topics tr:nth-child(even) {
+        /* меняем цвет в нечетных топиках */
+        background-color: #efe2e2;
+    }
+
+    #topics tr:hover {
+        /* меняем цвет при наведении на топик */
+        background-color: #d0d8db;
+    }
+
+    #topics th {
+        background-color: #9a3737;
+        color: white;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: center;
     } 

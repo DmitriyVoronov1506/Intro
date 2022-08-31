@@ -9,6 +9,7 @@ using System.Linq;
 using WebApplicationClassWork.DAL.Context;
 using WebApplicationClassWork.DAL.Entities;
 using WebApplicationClassWork.Models;
+using WebApplicationClassWork.Services;
 
 namespace WebApplicationClassWork.API
 {
@@ -17,10 +18,12 @@ namespace WebApplicationClassWork.API
     public class ArticleController : ControllerBase
     {
         private readonly IntroContext _context;
+        private readonly Services.IAuthService _authService;
 
-        public ArticleController(IntroContext context)
+        public ArticleController(IntroContext context, IAuthService authService)
         {
             _context = context;
+            _authService = authService;
         }
 
         [HttpPost]
@@ -131,9 +134,76 @@ namespace WebApplicationClassWork.API
                 return null;
             }
 
-            var list = _context.Articles.Include(a => a.Author).Include(a => a.Topic).Include(a => a.Reply).Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate).ToList();
+            //var list = _context.Articles.Include(a => a.Author).Include(a => a.Topic).Include(a => a.Reply).Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate).ToList();
 
             return _context.Articles.Include(a => a.Author).Include(a => a.Topic).Include(a => a.Reply).Where(a => a.TopicId == TopicId && a.DeleteMoment == null).OrderBy(a => a.CreatedDate); // возвращаем все статьи топика
         }
+
+        [HttpGet]
+        public IEnumerable Get()
+        {
+            // GET-параметры, передаваемые в запросе (после ?)
+            // собираются в коллекции HttpContext.Request.Query
+            // доступны через индексатор Query["key"]
+            if (HttpContext.Request.Query["del"] == "true")
+            {
+                // запрос удаленных статей
+                // проверяем аутентификацию
+                if (_authService.User == null)
+                {
+                    HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    return new string[0];
+                }
+
+                return _context.Articles.Where(a =>
+                    _authService.User.Id == a.AuthorId
+                    &&
+                    a.DeleteMoment != null
+                ).Include(a => a.Topic);
+            }
+
+            return new string[0];
+        }
+
+        [HttpDelete("{id}")]
+        public object Delete(string id)
+        {
+            // Проверка аутентификации
+            if (_authService.User == null)
+            {
+                return new { status = "Error", message = "Anauthorized" };
+            }
+
+            // Проверка id на валидность
+            Guid articleId;
+            try
+            {
+                articleId = Guid.Parse(id);
+            }
+            catch
+            {
+                return new { status = "Error", message = "Invalid id" };
+            }
+            var article = _context.Articles.Find(articleId);
+            if (article == null)
+            {
+                return new { status = "Error", message = "Invalid article" };
+            }
+
+            // Проверка того что удаляемый пост принадлежит автору (авторизация)
+            if (article.AuthorId != _authService.User.Id)
+            {
+                HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return new { status = "Error", message = "Forbidden" };
+            }
+
+            // удаление - установка DeleteMoment для статьи
+            article.DeleteMoment = DateTime.Now;
+            _context.SaveChanges();
+
+            return new { status = "Ok", message = "Deleted" };
+        }
     }
+
+
 }
