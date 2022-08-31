@@ -76,3 +76,51 @@ body {
     margin: 5vh 5vh;
     padding: 4vh 4vh;
 }
+
+
+/*========================== Article ==========================*/
+
+.article { /* блок публикации */
+    border: 1px solid salmon;
+    box-shadow: 1px 2px 4px 4px lightgray;
+    margin: 1em auto;
+    width: 75vw;
+}
+
+    .article span { /* "кнопка" ответить (reply) */
+        cursor: pointer;
+        float: right;
+        font-size: x-large;
+        margin: -5px 10px 0 0;
+    }
+
+    .article em { /* блок имени автора и его картинки */
+        border-right: 1px solid gray;
+        float: left;
+        margin: 3px;
+        width: 120px;
+    }
+
+        .article em b { /* автор (имя) */
+            display: block;
+            text-align: center;
+        }
+
+        .article em img { /* картинка (аватар) */
+            max-width: 100%;
+        }
+
+    .article hr { /* линия-разделитель под датой */
+        margin-left: 120px;
+    }
+
+    .article p { /* текст статьи (публикации) */
+        padding: .5ch;
+        text-align: justify;
+    }
+
+        .article p img { /* картинка в статье */
+            float: left;
+            margin-right: 1ch;
+            max-width: 70px;
+        }

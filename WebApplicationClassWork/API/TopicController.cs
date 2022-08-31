@@ -98,7 +98,8 @@ namespace WebApplicationClassWork.API
             {
                 Title = topic.Title,
                 Description = topic.Description,
-                AuthorId = UserId
+                AuthorId = UserId,
+                CreatedDate = DateTime.Now
             });
 
             _context.SaveChangesAsync();
@@ -109,7 +110,7 @@ namespace WebApplicationClassWork.API
         [HttpGet]
         public IEnumerable<Topic> Get()
         {
-            return _context.Topics;
+            return _context.Topics.OrderByDescending(t=>t.LastArticleMoment);
         }
     }
 }

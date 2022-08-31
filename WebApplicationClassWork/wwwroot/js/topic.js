@@ -19,6 +19,8 @@ function buttonPublishClick(e) {
     const txt = articleText.value;
     const authorId = articleText.getAttribute("data-author-id");
     const topicId = articleText.getAttribute("data-topic-id");
+    let replyId = articleText.getAttribute("data-reply-id");
+    if (replyId.length < 5) replyId = null;
 
     console.log("Author ID: " + articleText.dataset.author);                      // Выводим всё из атрибутов Data
     console.log("Topic ID: " + topicId);
@@ -31,7 +33,7 @@ function buttonPublishClick(e) {
     formData.append('TopicId', topicId);
     formData.append('Text', txt);
     formData.append('AuthorId', authorId);
-
+    formData.append('ReplyId', replyId);
     formData.append('PictureFile', picture.files[0]);
 
     fetch("/api/article", {
@@ -43,6 +45,7 @@ function buttonPublishClick(e) {
           if (j.status == "Ok") {
 
               articleText.value = "";
+              articleText.setAttribute("data-reply-id", "");
               loadArticles();
           }        
           else alert(j.message);
@@ -68,13 +71,19 @@ function loadArticles() {
 
             for (let article of j) {
                 const moment = new Date(article.createdDate);
+                var replyText = showReplyText(j, article.replyId);
+                var replyAuthor = showReplyAuthorName(j, article.replyId);
+                var replyMoment = new Date(showReplyCreatedDate(j, article.replyId));
+
                 html += tpl.replaceAll("{{author}}", (article.author.id == article.topic.authorId ? article.author.realName + " TC" : article.author.realName))
                     .replaceAll("{{text}}", article.text)
                     .replaceAll("{{avatar}}", (article.author.avatar == "" || article.author.avatar == null ? "no-avatar.png" : article.author.avatar))
                     .replaceAll("{{moment}}", new Date(article.createdDate).toLocaleString("ru-RU"))
-                    .replaceAll("{{PictureFileForArticle}}", (article.pictureFile != null && article.pictureFile != "" ? `<img src='/img/ArticleImg/${article.pictureFile}' style='height:10ch; width:10ch; display: block; float: left'>` : ""))
-                    .replaceAll("{{id}}", article.id);
-            } 
+                    .replaceAll("{{id}}", article.id)
+                    .replaceAll("{{reply}}", (article.replyId == null ? "" : `<b>${article.reply.author.realName}</b>: ` + article.reply.text.substring(0, 13) + (article.reply.text.length > 13 ? "..." : "")))
+                    .replaceAll("{{picture}}", (article.pictureFile == null || article.pictureFile == "" ? "no-picture.png" : article.pictureFile))
+                    .replaceAll("{{replyTitle}}", `Article: ${replyText}\r\nAuthor: ${replyAuthor}.\r\nCreated Date: ${replyMoment.toLocaleString("ru-RU")}`);
+            }
 
             articles.innerHTML = html;
 
@@ -91,9 +100,39 @@ function onArticlesLoad() {
 
 function replyClick(e) {
 
-    console.log(e.target.closest(".article").getAttribute("data-id"));
+    const id = e.target.closest(".article").getAttribute("data-id");
+    const articleText = document.getElementById("article-text");
+    if (!articleText) throw "article-text element not found";
+    articleText.setAttribute("data-reply-id", id);
+    articleText.focus();
+}
 
-    const arttext = document.getElementById("article-text");
-    arttext.focus();
-    arttext.value = "Reply to " + e.target.closest(".article").getAttribute("data-id");
+function showReplyText(arr, replyId) {
+
+    for (article of arr) {
+
+        if (article.id == replyId) {
+            return article.text;
+        }
+    }
+}
+
+function showReplyAuthorName(arr, replyId) {
+
+    for (article of arr) {
+
+        if (article.id == replyId) {
+            return article.author.realName;
+        }
+    }
+}
+
+function showReplyCreatedDate(arr, replyId) {
+
+    for (article of arr) {
+
+        if (article.id == replyId) {
+            return article.createdDate;
+        }
+    }
 }

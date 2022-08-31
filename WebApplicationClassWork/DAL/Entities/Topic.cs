@@ -15,6 +15,9 @@ namespace WebApplicationClassWork.DAL.Entities
         public string Description { get; set; }
         public Guid AuthorId { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+        public DateTime LastArticleMoment { get; set; }
+
         [JsonIgnore]
         public List<Article> Articles { get; set; }
     }

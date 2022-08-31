@@ -76,9 +76,11 @@ namespace WebApplicationClassWork.API
                 }
             }
 
+            DateTime now = DateTime.Now;
+
             articleToAdd.Text = article.Text;
             articleToAdd.TopicId = TopicId;
-            articleToAdd.CreatedDate = DateTime.Now;
+            articleToAdd.CreatedDate = now;
             articleToAdd.AuthorId = AuthorId;
             
             if(article.PictureFile != null) // Для картинок создал отдельные папки для Юзера и для Статей что бы не смешивать 
@@ -107,6 +109,9 @@ namespace WebApplicationClassWork.API
             articleToAdd.PictureFile = fileName;
 
             _context.Articles.Add(articleToAdd);
+
+            _context.Topics.Find(articleToAdd.TopicId).LastArticleMoment = now;
+
             _context.SaveChanges();
 
             return new { status = "Ok", message = $"Article for topic '{article.TopicId}' was created" };  // Статья создана успешно
@@ -126,7 +131,7 @@ namespace WebApplicationClassWork.API
                 return null;
             }
 
-            var list = _context.Articles.Include(a => a.Author).Include(a => a.Topic).Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate).ToList();
+            var list = _context.Articles.Include(a => a.Author).Include(a => a.Topic).Include(a => a.Reply).Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate).ToList();
 
             return _context.Articles.Include(a => a.Author).Include(a => a.Topic).Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate); // возвращаем все статьи топика
         }

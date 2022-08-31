@@ -17,5 +17,6 @@ namespace WebApplicationClassWork.DAL.Entities
         public string PictureFile { get; set; }
         public User Author { get; set; }
         public Topic Topic { get; set; }
+        public Article Reply { get; set; }
     }
 }
