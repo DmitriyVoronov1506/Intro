@@ -133,7 +133,7 @@ namespace WebApplicationClassWork.API
 
             var list = _context.Articles.Include(a => a.Author).Include(a => a.Topic).Include(a => a.Reply).Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate).ToList();
 
-            return _context.Articles.Include(a => a.Author).Include(a => a.Topic).Where(a => a.TopicId == TopicId).OrderBy(a => a.CreatedDate); // возвращаем все статьи топика
+            return _context.Articles.Include(a => a.Author).Include(a => a.Topic).Include(a => a.Reply).Where(a => a.TopicId == TopicId && a.DeleteMoment == null).OrderBy(a => a.CreatedDate); // возвращаем все статьи топика
         }
     }
 }

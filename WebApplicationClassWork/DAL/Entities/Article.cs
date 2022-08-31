@@ -18,5 +18,7 @@ namespace WebApplicationClassWork.DAL.Entities
         public User Author { get; set; }
         public Topic Topic { get; set; }
         public Article Reply { get; set; }
+
+        public DateTime? DeleteMoment { get; set; }
     }
 }

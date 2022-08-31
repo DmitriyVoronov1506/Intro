@@ -124,3 +124,19 @@ body {
             margin-right: 1ch;
             max-width: 70px;
         }
+
+    .article del {
+        cursor: pointer;
+        float: right;
+        margin-right: 2em;
+        margin-top: 3px;
+        text-decoration: none;
+    }
+
+    .article ins {
+        cursor: pointer;
+        float: right;
+        margin-right: 2em;
+        margin-top: 3px;
+        text-decoration: none;
+    } 

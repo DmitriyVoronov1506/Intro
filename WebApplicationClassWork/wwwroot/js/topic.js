@@ -20,7 +20,7 @@ function buttonPublishClick(e) {
     const authorId = articleText.getAttribute("data-author-id");
     const topicId = articleText.getAttribute("data-topic-id");
     let replyId = articleText.getAttribute("data-reply-id");
-    if (replyId.length < 5) replyId = null;
+    if (replyId.length < 5) replyId = "";
 
     console.log("Author ID: " + articleText.dataset.author);                      // Выводим всё из атрибутов Data
     console.log("Topic ID: " + topicId);
@@ -60,6 +60,11 @@ function loadArticles() {
 
     let tplPromis = fetch("/templates/article.html")
 
+    const articleText = document.getElementById("article-text");
+    const authorId = (articleText)
+        ? articleText.getAttribute("data-author-id")
+        : "-";
+
     const id = articles.getAttribute("topic-id");
 
     fetch(`/api/article/${id}`)
@@ -71,9 +76,6 @@ function loadArticles() {
 
             for (let article of j) {
                 const moment = new Date(article.createdDate);
-                var replyText = showReplyText(j, article.replyId);
-                var replyAuthor = showReplyAuthorName(j, article.replyId);
-                var replyMoment = new Date(showReplyCreatedDate(j, article.replyId));
 
                 html += tpl.replaceAll("{{author}}", (article.author.id == article.topic.authorId ? article.author.realName + " TC" : article.author.realName))
                     .replaceAll("{{text}}", article.text)
@@ -82,7 +84,9 @@ function loadArticles() {
                     .replaceAll("{{id}}", article.id)
                     .replaceAll("{{reply}}", (article.replyId == null ? "" : `<b>${article.reply.author.realName}</b>: ` + article.reply.text.substring(0, 13) + (article.reply.text.length > 13 ? "..." : "")))
                     .replaceAll("{{picture}}", (article.pictureFile == null || article.pictureFile == "" ? "no-picture.png" : article.pictureFile))
-                    .replaceAll("{{replyTitle}}", `Article: ${replyText}\r\nAuthor: ${replyAuthor}.\r\nCreated Date: ${replyMoment.toLocaleString("ru-RU")}`);
+                    .replaceAll("{{replyTitle}}", `Article: ${getReplyText(j, article.replyId)}\r\nAuthor: ${getReplyAuthorName(j, article.replyId)}.\r\nCreated Date: ${new Date(getReplyCreatedDate(j, article.replyId)).toLocaleString("ru-RU")}`)
+                    .replace("{{del-display}}", (article.authorId == authorId ? "inline-block" : "none"))
+                    .replaceAll("{{edit-display}}", (ChangeButtonCheck(j, article.authorId, article.replyId, article.id) ? "inline-block" : "none"));
             }
 
             articles.innerHTML = html;
@@ -96,6 +100,10 @@ function onArticlesLoad() {
     for (let span of document.querySelectorAll(".article span")) {
         span.onclick = replyClick;
     }
+
+    for (let del of document.querySelectorAll(".article del")) {
+        del.onclick = deleteClick; 
+    }
 }
 
 function replyClick(e) {
@@ -107,7 +115,7 @@ function replyClick(e) {
     articleText.focus();
 }
 
-function showReplyText(arr, replyId) {
+function getReplyText(arr, replyId) {
 
     for (article of arr) {
 
@@ -117,7 +125,7 @@ function showReplyText(arr, replyId) {
     }
 }
 
-function showReplyAuthorName(arr, replyId) {
+function getReplyAuthorName(arr, replyId) {
 
     for (article of arr) {
 
@@ -127,7 +135,7 @@ function showReplyAuthorName(arr, replyId) {
     }
 }
 
-function showReplyCreatedDate(arr, replyId) {
+function getReplyCreatedDate(arr, replyId) {
 
     for (article of arr) {
 
@@ -136,3 +144,31 @@ function showReplyCreatedDate(arr, replyId) {
         }
     }
 }
+
+function ChangeButtonCheck(j, artAuthorId, artReplyId, artId) {
+    const articleText = document.getElementById("article-text");
+    const authorId = (articleText) ? articleText.getAttribute("data-author-id") : "-";
+
+    if (artAuthorId == authorId) {
+        for (let article of j) {
+            if (artReplyId == article.id) {
+                return true; 
+            }
+            if (artId == article.replyId) {
+                return false; 
+            }
+        }
+
+        if (artReplyId == null) {
+            return true; 
+        }
+    }
+    else {
+        return false; 
+    }
+}
+
+function deleteClick(e) {
+    const id = e.target.closest(".article").getAttribute("data-id");
+    console.log(id);
+} 
