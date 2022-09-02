@@ -86,7 +86,7 @@ function loadArticles() {
                     .replaceAll("{{picture}}", (article.pictureFile == null || article.pictureFile == "" ? "no-picture.png" : article.pictureFile))
                     .replaceAll("{{replyTitle}}", `Article: ${getReplyText(j, article.replyId)}\r\nAuthor: ${getReplyAuthorName(j, article.replyId)}.\r\nCreated Date: ${new Date(getReplyCreatedDate(j, article.replyId)).toLocaleString("ru-RU")}`)
                     .replace("{{del-display}}", (article.authorId == authorId ? "inline-block" : "none"))
-                    .replaceAll("{{edit-display}}", (ChangeButtonCheck(j, article.authorId, article.replyId, article.id) ? "inline-block" : "none"));
+                    .replaceAll("{{edit-display}}", (article.authorId == authorId ? "inline-block" : "none"));
             }
 
             articles.innerHTML = html;
@@ -103,6 +103,10 @@ function onArticlesLoad() {
 
     for (let del of document.querySelectorAll(".article del")) {
         del.onclick = deleteClick; 
+    }
+
+    for (let ins of document.querySelectorAll(".article ins")) {
+        ins.onclick = insClick;
     }
 }
 
@@ -180,6 +184,51 @@ function deleteClick(e) {
                     e.target.closest(".article").style.display = 'none';
                 }
             });
+    }
+}
+
+function insClick(e) {
+    const article = e.target.closest(".article");
+    const p = article.querySelector("p");
+
+    if (p.getAttribute("contenteditable")) {  // уже редактируется
+        e.target.style.color = "orange";
+        e.target.style.border = "none";
+        p.removeAttribute("contenteditable");
+        // проверить, были ли изменения контента
+        if (p.innerText != p.savedContent) {
+            // если были, то запросить "Сохранить изменения?"
+            if (confirm("Сохранить изменения?")) {
+                // если Да, то отправить на бэкенд
+                const id = article.getAttribute("data-id");
+
+                fetch(`/api/article/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(p.innerText)
+                }).then(r => r.json())
+                    .then(j => {
+                        console.log(j);
+                        if (j.status == "Ok") {
+                            alert("Изменения внесены");
+                        }
+                        else {
+                            alert(j.message);
+                            p.innerText = p.savedContent;
+                        }
+                    });
+
+            }
+        }
+    }
+    else {  // начало редактирования
+        e.target.style.color = "lime";
+        e.target.style.border = "1px solid red";
+        p.setAttribute("contenteditable", "true");
+        p.savedContent = p.innerText;
+        p.focus();
     }
 }
 

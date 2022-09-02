@@ -204,6 +204,89 @@ namespace WebApplicationClassWork.API
             return new { status = "Ok", message = "Deleted" };
         }
 
+        [HttpPut("{id}")]
+        public object Put(string id, [FromBody] string text)
+        {
+            // text не пустой
+            if (String.IsNullOrEmpty(text))
+            {
+                HttpContext.Response.StatusCode =
+                    StatusCodes.Status400BadRequest;
+                return new
+                {
+                    Status = "error",
+                    message = "Empty text not allowed"
+                };
+            }
+            // id валидный
+            Guid articleId;
+            try
+            {
+                articleId = Guid.Parse(id);
+            }
+            catch
+            {
+                HttpContext.Response.StatusCode =
+                    StatusCodes.Status400BadRequest;
+                return new
+                {
+                    Status = "error",
+                    message = "Invalid id format (GUID required)"
+                };
+            }
+            var article = _context.Articles.Find(articleId);
+            if (article == null)
+            {
+                HttpContext.Response.StatusCode =
+                    StatusCodes.Status404NotFound;
+                return new
+                {
+                    Status = "error",
+                    message = "Article not found"
+                };
+            }
+            if (article.DeleteMoment != null)
+            {
+                HttpContext.Response.StatusCode =
+                    StatusCodes.Status403Forbidden;
+                return new
+                {
+                    Status = "error",
+                    message = "Deleted Article should not be edited"
+                };
+            }
+            // авторизация
+            if (_authService.User == null)
+            {
+                HttpContext.Response.StatusCode =
+                    StatusCodes.Status401Unauthorized;
+                return new
+                {
+                    Status = "error",
+                    message = "Log in for editing"
+                };
+            }
+            // юзер - автор
+            if (_authService.User.Id != article.AuthorId)
+            {
+                HttpContext.Response.StatusCode =
+                    StatusCodes.Status403Forbidden;
+                return new
+                {
+                    Status = "error",
+                    message = "Only authors could edit articles"
+                };
+            }
+            // фиксируем изменения
+            article.Text = text;
+            _context.SaveChanges();
+            return new
+            {
+                Status = "Ok",
+                message = "Edit complete"
+            };
+        }
+
         // Public метод без атрибутов - как метод по умолчанию,
         // сюда попадут запросы, которые не подошли под остальные методы
         // Такой метод должен быть только один (иначе исключение - 
@@ -280,6 +363,8 @@ namespace WebApplicationClassWork.API
         {
             return new { uid, Method = "Unlink" };
         }
+
+
     }
 
 
