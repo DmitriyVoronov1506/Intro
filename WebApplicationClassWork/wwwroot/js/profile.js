@@ -79,7 +79,7 @@ function avatarChange(e) {
 function editableClick(e) {
     e.target.setAttribute("contenteditable", true);
     e.target.savedValue = e.target.innerText;
-
+    
     if (e.target.id == "userPassword") {
         e.target.innerText = "";
     }
