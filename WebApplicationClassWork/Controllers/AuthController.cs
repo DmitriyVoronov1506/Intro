@@ -86,10 +86,10 @@ namespace WebApplicationClassWork.Controllers
         {
             HttpContext.Session.Remove("userId");
 
-            _authService.User.LogMoment = DateTime.Now;   // Запоминаем момент логина (в миддлвер тоже самое)
+            _authService.User.LogMoment = DateTime.Now;   // Запоминаем момент логина (в миддлвер тоже самое происходит)
             _introContext.SaveChanges();
 
-            return Redirect("/");  // Bозвращаемся на Home
+            return Redirect("/");  // Bозвращаемся назад на Home
         }
 
         [HttpPost]
