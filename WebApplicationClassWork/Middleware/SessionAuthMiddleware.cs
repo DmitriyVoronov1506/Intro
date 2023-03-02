@@ -21,7 +21,7 @@ namespace WebApplicationClassWork.Middleware
             if (userId != null)
             {
                 authService.Set(userId);
-
+                
                 long authMoment = Convert.ToInt64(context.Session.GetString("AuthMoment"));  
                 long authInterval = (DateTime.Now.Ticks - authMoment) / (long)1e7;
 
@@ -37,7 +37,7 @@ namespace WebApplicationClassWork.Middleware
                     return;
                 }
             }
-
+            //maincommit
             context.Items.Add("fromAuthMiddleware", "Hello !!");
 
             await next(context);
