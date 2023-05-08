@@ -22,7 +22,7 @@ namespace WebApplicationClassWork.API
 
         public ArticleController(IntroContext context, IAuthService authService)
         {
-            _context = context;
+            _context = context; 
             _authService = authService;
         }
 
